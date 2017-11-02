@@ -474,7 +474,8 @@ class GCodeParser:
         self.respond("X:%.3f Y:%.3f Z:%.3f E:%.3f Count %s" % (
             self.last_position[0], self.last_position[1],
             self.last_position[2], self.last_position[3],
-            " ".join(["%s:%d" % (n.upper(), p) for n, p in raw_pos])))
+            " ".join(["%s:%.3f(%d)" % (n.upper(), cp, p)
+                      for n, cp, p in raw_pos])))
     cmd_M115_when_not_ready = True
     def cmd_M115(self, params):
         # Get Firmware Version and Capabilities

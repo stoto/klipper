@@ -111,7 +111,8 @@ def query_endstops(toolhead):
 
 def query_position(toolhead):
     steppers = toolhead.get_kinematics().get_steppers()
-    return [(s.name.upper(), s.mcu_stepper.get_mcu_position()) for s in steppers]
+    return [(s.name, s.mcu_stepper.get_commanded_position(),
+             s.mcu_stepper.get_mcu_position()) for s in steppers]
 
 class EndstopError(Exception):
     pass
