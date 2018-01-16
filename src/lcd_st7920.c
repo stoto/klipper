@@ -29,18 +29,22 @@ static void
 st7920_xmit(struct st7920 *s, uint32_t data)
 {
     struct gpio_out sclk = s->sclk, sid = s->sid;
-    uint8_t i;
+    uint8_t i, last_b = 0;
     for (i=0; i<3; i++) {
         uint8_t b = data >> 16, j;
         data <<= 8;
         for (j=0; j<8; j++) {
             gpio_out_toggle(sclk);
-            gpio_out_write(sid, b & 0x80);
-            b <<= 1;
+            if ((b ^ last_b) & 0x80)
+                gpio_out_toggle(sid);
             gpio_out_toggle(sclk);
+            last_b = b;
+            b <<= 1;
         }
     }
     s->nexttime = timer_read_time() + timer_from_us(72);
+    if (last_b & 0x80)
+        gpio_out_toggle(sid);
 }
 
 void
@@ -129,6 +133,7 @@ st7920_task(void)
         uint8_t data = s->buffer[s->cur_pos++];
         xmit = SYNC_DATA | ((data & 0xf0) << 8) | (data << 4);
     }
+    // XXX - ideally xmit would be done prior to bookkeeping..
     st7920_xmit(s, xmit);
     sched_wake_task(&s->wake);
 }
