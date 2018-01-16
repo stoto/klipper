@@ -105,6 +105,8 @@ class DeltaKinematics:
         for i in StepList:
             self.steppers[i].set_position(pos[i])
         self.limit_xy2 = -1.
+    def clear_homing_checks(self):
+        self.need_home = False
     def home(self, homing_state):
         # All axes are homed simultaneously
         homing_state.set_axes([0, 1, 2])

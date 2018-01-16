@@ -31,6 +31,10 @@ class CartKinematics:
     def set_position(self, newpos):
         for i in StepList:
             self.steppers[i].set_position(newpos[i])
+    def clear_homing_checks(self):
+        for axis in StepList:
+            s = self.steppers[axis]
+            self.limits[axis] = (s.position_min, s.position_max)
     def home(self, homing_state):
         # Each axis is homed independently and in order
         for axis in homing_state.get_axes():

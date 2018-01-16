@@ -419,6 +419,35 @@ class Replicape:
 
 
 ######################################################################
+# Homing override
+######################################################################
+
+class PrinterHomingOverride:
+    def __init__(self, printer, config):
+        self.printer = printer
+        self.start_pos = [config.getfloat('set_position_' + a, 0.)
+                          for a in 'xyz']
+        self.script = config.get('gcode').split('\n')
+        self.in_script = False
+        self.gcode = printer.objects['gcode']
+        self.gcode.register_command("G28", self.cmd_G28)
+    def cmd_G28(self, params):
+        if self.in_script:
+            # Was called recursively - invoke the real G28 command
+            self.gcode.cmd_G28(params)
+            return
+        try:
+            self.in_script = True
+            toolhead = self.printer.objects['toolhead']
+            toolhead.set_position(self.start_pos + [toolhead.get_position()[3]])
+            self.gcode.reset_last_position()
+            toolhead.get_kinematics().clear_homing_checks()
+            self.gcode.process_commands(self.script, need_ack=False)
+        finally:
+            self.in_script = False
+
+
+######################################################################
 # Setup
 ######################################################################
 
@@ -440,3 +469,6 @@ def add_printer_objects(printer, config):
         printer.add_object(s.section, PrinterServo(printer, s))
     for s in config.get_prefix_sections('ad5206 '):
         printer.add_object(s.section, ad5206(printer, s))
+    if config.has_section('homing_override'):
+        printer.add_object('homing_override', PrinterHomingOverride(
+            printer, config.getsection('homing_override')))
