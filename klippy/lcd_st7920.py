@@ -53,21 +53,21 @@ class PrinterST7920:
             self.last_addr = -1
             del self.pending_data[:]
     def send_data(self, addr, data):
-        if (addr == self.last_addr + len(self.pending_data)
-            and len(self.pending_data) < 16):
-            self.pending_data.append(data)
-            return
-        self.flush_data()
-        self.last_addr = addr
-        self.pending_data.append(data)
+        # XXX - support GDRAM and CGRAM addresses
+        if (addr != self.last_addr + len(self.pending_data) // 2
+            or len(self.pending_data) >= 16):
+            self.flush_data()
+            self.last_addr = addr
+        self.pending_data.extend([(data >> 8) & 0xff, data & 0xff])
     def send_command(self, cmd):
+        # XXX - support extended commands
         self.flush_data()
         self.send([cmd])
     def work_event(self, eventtime):
         # Test code
-        self.send_data(DDRAM_ADDR | self.test_position, 0x00)
+        self.send_data(DDRAM_ADDR | self.test_position, 0x2020)
         self.test_position = (self.test_position + 1) % 64
-        self.send_data(DDRAM_ADDR | self.test_position, 0x23)
+        self.send_data(DDRAM_ADDR | self.test_position, 0x2323)
         return eventtime + 0.100
 
 def add_printer_objects(printer, config):
