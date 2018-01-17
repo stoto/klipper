@@ -23,7 +23,7 @@ struct st7920 {
 static struct st7920 *main_st7920;
 
 #define SYNC_CMD  0xf80000UL
-#define SYNC_DATA 0xfc0000UL
+#define SYNC_DATA 0xfa0000UL
 
 static void
 st7920_xmit(struct st7920 *s, uint32_t data)
