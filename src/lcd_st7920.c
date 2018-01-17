@@ -127,11 +127,11 @@ st7920_task(void)
         s->cur_pos = 2;
         // Send command byte
         uint8_t cmd = s->buffer[1];
-        xmit = SYNC_CMD | ((cmd & 0xf0) << 8) | (cmd << 4);
+        xmit = SYNC_CMD | (unsigned)((cmd & 0xf0) << 8) | (uint8_t)(cmd << 4);
     } else {
         // Send data byte
         uint8_t data = s->buffer[s->cur_pos++];
-        xmit = SYNC_DATA | ((data & 0xf0) << 8) | (data << 4);
+        xmit = SYNC_DATA | (unsigned)((data & 0xf0) << 8) | (uint8_t)(data << 4);
     }
     // XXX - ideally xmit would be done prior to bookkeeping..
     st7920_xmit(s, xmit);
