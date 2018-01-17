@@ -38,7 +38,7 @@ class PrinterST7920:
         self.burst_cmd = self.mcu.lookup_command(
             "st7920_burst cmd_then_data=%*s")
         self.mcu.register_msg(self.handle_position, "st7920_position")
-        self.reactor.update_timer(self.work_timer, self.reactor.NOW)
+        self.reactor.update_timer(self.work_timer, self.reactor.monotonic() + 5.)
     def handle_position(self, params):
         # XXX - release more data when queue space available
         pass
