@@ -34,12 +34,13 @@ st7920_xmit(struct st7920 *s, uint32_t data)
         uint8_t b = data >> 16, j;
         data <<= 8;
         for (j=0; j<8; j++) {
-            gpio_out_toggle(sclk);
             if ((b ^ last_b) & 0x80)
                 gpio_out_toggle(sid);
             gpio_out_toggle(sclk);
             last_b = b;
             b <<= 1;
+            asm("nop\n nop");
+            gpio_out_toggle(sclk);
         }
     }
     s->nexttime = timer_read_time() + timer_from_us(72);
