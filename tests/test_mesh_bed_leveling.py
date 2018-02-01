@@ -1,9 +1,8 @@
 import unittest
-import ConfigParser
-from mesh_bed_leveling import Interpolator
+from klippy.extras.mesh_bed_leveling import Interpolator
 
 
-class MyTestCase(unittest.TestCase):
+class MeshBedLevelingTests(unittest.TestCase):
 
     def test_leveling_is_the_same_as_measurements(self):
         measurements = [0.5, 1.0, 0, 0]
