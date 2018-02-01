@@ -8,7 +8,7 @@ class MeshBedLevelingTests(unittest.TestCase):
         measurements = [0.5, 1.0, 0, 0]
         locations = [[0, 0], [275, 290], [275, 0], [0, 290]]
 
-        interpolator = Interpolator(bed_max_x=275, bed_max_y=290)
+        interpolator = Interpolator(x_bed_size=275, y_bed_size=290)
         interpolator.setup_interpolation(locations, measurements)
 
         self.assertEqual(0.0, interpolator.compensation_for_coordinate(275, 0))
@@ -20,7 +20,7 @@ class MeshBedLevelingTests(unittest.TestCase):
         measurements = [0, 0, 0, 0, 1]
         locations = [[0, 0], [0, 200], [200, 0], [200, 200], [100, 100]]
 
-        interpolator = Interpolator(bed_max_x=200, bed_max_y=200)
+        interpolator = Interpolator(x_bed_size=200, y_bed_size=200)
         interpolator.setup_interpolation(locations, measurements)
 
         self.assertEquals(0.5, interpolator.compensation_for_coordinate(50, 50))
@@ -37,7 +37,7 @@ class MeshBedLevelingTests(unittest.TestCase):
         measurements = [0, 0, 0, 0, 1]
         locations = [[0, 0], [0, 200], [200, 0], [200, 200], [100, 100]]
 
-        interpolator = Interpolator(bed_max_x=200, bed_max_y=200)
+        interpolator = Interpolator(x_bed_size=200, y_bed_size=200)
         interpolator.setup_interpolation(locations, measurements)
 
         self.assertEquals(0, interpolator.compensation_for_coordinate(250, 100))
@@ -48,7 +48,7 @@ class MeshBedLevelingTests(unittest.TestCase):
         measurements = [0, 0, 0, 0, 1]
         locations = [[0, 0], [0, 200], [200, 0], [200, 200], [100, 100]]
 
-        interpolator = Interpolator(bed_max_x=200, bed_max_y=200)
+        interpolator = Interpolator(x_bed_size=200, y_bed_size=200)
         interpolator.setup_interpolation(locations, measurements)
 
         self.assertEquals(0.5, interpolator.compensation_for_coordinate(50.0, 50.0))

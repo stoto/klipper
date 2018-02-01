@@ -5,11 +5,11 @@ from scipy.interpolate import griddata
 class MeshBedLeveling:
     def __init__(self, config):
         self.printer = config.get_printer()
-        self.bed_max_x = config.getFloat('bed_max_x', 100.)
-        self.bed_max_y = config.getFloat('bed_max_y', 100.)
-        self.interpolator = Interpolator(self.bed_max_x, self.bed_max_y)
-        self.interpolator.setup_interpolation([[0, 0], [self.bed_max_x, 0], [0, self.bed_max_y],
-                                               [self.bed_max_x, self.bed_max_y]], [0, 0, 0, 0])
+        self.x_bed_size = config.getFloat('x_bed_size', 100.)
+        self.y_bed_size = config.getFloat('y_bed_size', 100.)
+        self.interpolator = Interpolator(self.x_bed_size, self.y_bed_size)
+        self.interpolator.setup_interpolation([[0, 0], [self.x_bed_size, 0], [0, self.y_bed_size],
+                                               [self.x_bed_size, self.y_bed_size]], [0, 0, 0, 0])
 
         self.toolhead = None
         gcode = self.printer.lookup_object('gcode')
@@ -30,14 +30,14 @@ class MeshBedLeveling:
 
 
 class Interpolator:
-    def __init__(self, bed_max_x, bed_max_y):
-        self.bed_max_x = bed_max_x
-        self.bed_max_y = bed_max_y
+    def __init__(self, x_bed_size, y_bed_size):
+        self.x_bed_size = x_bed_size
+        self.y_bed_size = y_bed_size
         self.grid = None
 
     def setup_interpolation(self, measurement_coordinates, measurement_zheights):
-        mesh_x = np.linspace(0, self.bed_max_x, self.bed_max_x + 1)
-        mesh_y = np.linspace(0, self.bed_max_y, self.bed_max_y + 1)
+        mesh_x = np.linspace(0, self.x_bed_size, self.x_bed_size + 1)
+        mesh_y = np.linspace(0, self.y_bed_size, self.y_bed_size + 1)
         mesh_x, mesh_y = np.meshgrid(mesh_x, mesh_y)
         self.grid = griddata(np.array(measurement_coordinates), measurement_zheights, (mesh_x, mesh_y), method='linear')
 
@@ -45,7 +45,7 @@ class Interpolator:
         return self.grid.T[int(round(x))][int(round(y))] if self.is_inside_bed(x, y) else 0
 
     def is_inside_bed(self, x, y):
-        return x <= self.bed_max_x and y <= self.bed_max_y
+        return x <= self.x_bed_size and y <= self.y_bed_size
 
 
 def load_config(config):
