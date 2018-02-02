@@ -36,7 +36,7 @@ create_virtualenv()
     [ ! -d ${PYTHONDIR} ] && virtualenv ${PYTHONDIR}
 
     # Install/update dependencies
-    ${PYTHONDIR}/bin/pip install cffi==1.6.0 pyserial==3.2.1 greenlet==0.4.10 numpy=1.14.0 scipy=1.0.0
+    ${PYTHONDIR}/bin/pip install cffi==1.6.0 pyserial==3.2.1 greenlet==0.4.10 numpy==1.14.0 scipy==1.0.0
 }
 
 # Step 3: Install startup script
